@@ -1,4 +1,5 @@
 https://chatgpt.com/s/t_689a31562b2481919f30b3b69aebe6e0
+
 โอเค งั้นผมจะส่งเนื้อหาไฟล์ n8n-install-guide.md ให้เลย
 คุณก็อปทั้งหมดไปวางในไฟล์ใหม่บนเครื่อง หรือกด “Create new file” ใน GitHub แล้วตั้งชื่อเป็น n8n-install-guide.md ได้เลย
 
