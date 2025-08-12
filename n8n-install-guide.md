@@ -51,6 +51,7 @@ volumes:
 networks:
   n8n_network:
     driver: bridge
+```
 
 ### 1.3 เริ่มใช้งาน
 ```bash
