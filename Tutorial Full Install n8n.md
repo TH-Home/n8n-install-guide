@@ -183,7 +183,7 @@
    - **Region:** เลือก _us-central1_, _us-west1_ หรือ _us-east1_ (เข้า Free Tier)
    - **Zone:** เลือกใดก็ได้ใน Region นั้น
    - **Series:** E2
-   - **Machine type:** e2-micro (Free Tier)  
+   - **Machine type:** e2-micro (Free Tier)
       _(หมายเหตุ: ถ้าต้องการ RAM/CPU มากขึ้น เลือก e2-medium แต่จะมีค่าใช้จ่าย)_
 
 3. **Boot disk:**
@@ -248,7 +248,7 @@
 
 ### **A-1 ลงทะเบียนโดเมนกับ Cloudflare Registrar (ถ้ายังไม่มีโดเมน)**
 
-Cloudflare Registrar ให้บริการ **ลงทะเบียนโดเมนในราคาตามต้นทุนจริง โดยไม่มี markup หรือค่าต่ออายุแพง**  
+Cloudflare Registrar ให้บริการ **ลงทะเบียนโดเมนในราคาตามต้นทุนจริง โดยไม่มี markup หรือค่าต่ออายุแพง**
  **ขั้นตอน:**
 
 1. เข้าสู่ระบบ Cloudflare Dashboard
@@ -496,12 +496,14 @@ docker --version
   - volume สำหรับเก็บข้อมูล
   - network ระหว่าง container และ reverse proxy
 
-**คำสั่งติดตั้ง:**  
-bash  
-`sudo apt install docker-compose -y`  
-**ตรวจสอบเวอร์ชัน:**  
-bash  
-`docker-compose --version`  
+**คำสั่งติดตั้ง:**
+```bash
+sudo apt install docker-compose -y`
+```
+**ตรวจสอบเวอร์ชัน:**
+```bash
+`docker-compose --version`
+```
 **วิเคราะห์:**
 
 - การใช้ `apt install docker-compose` ติดตั้งจาก repo ทำให้การอัปเดตง่าย และ integrate กับระบบได้ดี
