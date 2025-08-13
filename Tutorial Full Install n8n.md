@@ -41,6 +41,7 @@
 7. **ผลลัพธ์** → กลับไปยังผู้ใช้ผ่าน Nginx และ HTTPS
 
 ---
+
 ### **💡 จุดเด่นของสถาปัตยกรรมนี้**
 
 - **ฟรี:** อยู่ใน Free tier ของ GCP ถ้าคุณใช้ e2-micro \+ traffic ไม่เกินกำหนด
@@ -162,8 +163,6 @@
  ได้ Project ใหม่ที่ใช้สำหรับ deployment n8n โดยเฉพาะ และมีขอบเขต billing แยกชัดเจน
 
 ---
-
-##
 
 ## **1.2 สร้าง Virtual Machine (VM)**
 
@@ -349,9 +348,10 @@ Cloudflare Registrar ให้บริการ **ลงทะเบียน�
   - whatsmydns.net → กรอก `n8n.thho.me` เลือก A Record
 - **คำสั่งใน Terminal:**
 
-  bash:  
-  `dig n8n.thho.me +short`  
-  `nslookup n8n.thho.me`
+```bash:
+  dig n8n.thho.me +short
+  nslookup n8n.thho.me
+```
 
 **ผลลัพธ์ที่ถูกต้อง:**
 
@@ -466,9 +466,11 @@ sudo apt upgrade -y
 - ลดปัญหา "ทำไมเครื่องผมรันได้ แต่เครื่องคุณรันไม่ได้"
 - อัปเดตง่าย เพียง pull image ใหม่แล้ว restart
 
-**คำสั่งติดตั้ง:**  
-bash  
-`sudo apt install docker.io -y`
+**คำสั่งติดตั้ง:**
+
+```bash
+sudo apt install docker.io -y
+```
 
 **การทำงานของคำสั่งนี้:**
 
@@ -476,9 +478,11 @@ bash
 2. การใช้แพ็กเกจจาก distro จะทำให้ Docker integrate กับ `systemd` ได้ดี และได้รับอัปเดตความปลอดภัยผ่าน `apt`
 3. `-y` ยืนยันการติดตั้งอัตโนมัติ
 
-**ตรวจสอบเวอร์ชันหลังติดตั้ง:**  
-bash  
-`docker --version`
+**ตรวจสอบเวอร์ชันหลังติดตั้ง:**
+
+```bash
+docker --version
+```
 
 ---
 
@@ -512,16 +516,18 @@ bash
 - เพื่อให้ Docker ทำงานตลอดเวลา และเริ่มอัตโนมัติเมื่อเซิร์ฟเวอร์รีบูต
 - ช่วยให้ n8n container กลับมาทำงานทันทีแม้มีการ maintenance หรือ restart เครื่อง
 
-**คำสั่ง:**  
-bash  
-`# เริ่มบริการ Docker ทันที`  
-`sudo systemctl start docker`
+**คำสั่ง:**
 
-`# ตั้งให้ Docker เริ่มอัตโนมัติเมื่อบูตเครื่อง`  
-`sudo systemctl enable docker`
+```bash
+# เริ่มบริการ Docker ทันที
+sudo systemctl start docker
 
-`# ตรวจสอบสถานะการทำงานของ Docker`  
-`sudo systemctl status docker`
+# ตั้งให้ Docker เริ่มอัตโนมัติเมื่อบูตเครื่อง
+sudo systemctl enable docker
+
+# ตรวจสอบสถานะการทำงานของ Docker
+sudo systemctl status docker
+```
 
 **การวิเคราะห์:**
 
@@ -566,36 +572,36 @@ bash
 
 ## **5.2 สร้างไฟล์ Docker Compose**
 
-bash  
-`nano docker-compose.yml`
-
+```bash  
+nano docker-compose.yml
+```
 จากนั้นใส่เนื้อหานี้ (แก้ `n8n.example.com` เป็นโดเมนจริง เช่น `n8n.thho.me`):  
-yaml  
-`services:`  
- `n8n:`  
- `image: n8nio/n8n:latest`  
- `container_name: n8n`  
- `restart: unless-stopped`  
- `ports:`  
- `- "5678:5678"`  
- `environment:`  
- `- N8N_HOST=n8n.thho.me`  
- `- WEBHOOK_TUNNEL_URL=https://n8n.thho.me/`  
- `- WEBHOOK_URL=https://n8n.thho.me/`  
- `- GENERIC_TIMEZONE=UTC`  
- `volumes:`  
- `- n8n_data:/home/node/.n8n`  
- `networks:`  
- `- n8n_network`
+```yaml
+services:
+ n8n:
+ image: n8nio/n8n:latest
+ container_name: n8n
+ restart: unless-stopped
+ ports:
+ - "5678:5678"
+ environment:
+ - N8N_HOST=n8n.thho.me
+ - WEBHOOK_TUNNEL_URL=https://n8n.thho.me/
+ - WEBHOOK_URL=https://n8n.thho.me/
+ - GENERIC_TIMEZONE=UTC
+ volumes:
+ - n8n_data:/home/node/.n8n
+ networks:
+ - n8n_network
 
-`volumes:`  
- `n8n_data:`  
- `driver: local`
+volumes:
+ n8n_data:
+ driver: local
 
-`networks:`  
- `n8n_network:`  
- `driver: bridge`
-
+networks:
+ n8n_network:
+ driver: bridge
+```
 **การวิเคราะห์แต่ละบรรทัด:**
 
 - `services` → กลุ่ม container ที่จะรันใน stack นี้
@@ -626,16 +632,16 @@ bash
 
 ## **5.4 ตรวจสอบการทำงานของ n8n**
 
-bash  
-`# ดู container ที่กำลังรัน`  
-`sudo docker-compose ps`
+```bash  
+# ดู container ที่กำลังรัน
+sudo docker-compose ps
 
-`# ดู log ของ container n8n`  
-`sudo docker-compose logs n8n`
+# ดู log ของ container n8n
+sudo docker-compose logs n8n
 
-`# ทดสอบการเชื่อมต่อภายในเครื่อง`  
-`curl -I http://localhost:5678`
-
+# ทดสอบการเชื่อมต่อภายในเครื่อง
+curl -I http://localhost:5678
+```
 **สิ่งที่ต้องเห็น:**
 
 - `docker-compose ps` → container `n8n` สถานะ "Up"
@@ -665,9 +671,9 @@ bash
 ## **6.1 ติดตั้ง Nginx**
 
 **คำสั่ง:**  
-bash  
-`sudo apt install nginx -y`
-
+```bash  
+sudo apt install nginx -y
+```
 **การทำงานของคำสั่งนี้:**
 
 - ติดตั้งแพ็กเกจ Nginx จาก repository ของ Debian/Ubuntu
@@ -690,39 +696,39 @@ bash
 `sudo nano /etc/nginx/sites-available/n8n.conf`
 
 **เนื้อหาไฟล์ (ปรับ `n8n.example.com` เป็นโดเมนจริง เช่น `n8n.thho.me`):**  
-nginx  
-`server {`  
- `listen 80;`  
- `server_name n8n.thho.me;`
+```nginx
+server {
+ listen 80;
+ server_name n8n.thho.me;
 
-    `# Redirect all HTTP traffic to HTTPS (will be added by Certbot)`
-    `location / {`
-        `proxy_pass http://localhost:5678;`
-        `proxy_http_version 1.1;`
+    # Redirect all HTTP traffic to HTTPS (will be added by Certbot)
+    location / {
+        proxy_pass http://localhost:5678;
+        proxy_http_version 1.1;
 
-        `# Disable buffering for real-time functionality`
-        `chunked_transfer_encoding off;`
-        `proxy_buffering off;`
-        `proxy_cache off;`
+        # Disable buffering for real-time functionality
+        chunked_transfer_encoding off;
+        proxy_buffering off;
+        proxy_cache off;
 
-        `# WebSocket support for n8n's real-time features`
-        `proxy_set_header Upgrade $http_upgrade;`
-        `proxy_set_header Connection "upgrade";`
+        # WebSocket support for n8n's real-time features
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
 
-        `# Essential proxy headers for proper functionality`
-        `proxy_set_header Host $host;`
-        `proxy_set_header X-Real-IP $remote_addr;`
-        `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;`
-        `proxy_set_header X-Forwarded-Proto $scheme;`
+        # Essential proxy headers for proper functionality
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
 
-        `# Extended timeout for long-running workflows`
-        `proxy_read_timeout 86400;`
-        `proxy_connect_timeout 60;`
-        `proxy_send_timeout 60;`
-    `}`
+        # Extended timeout for long-running workflows
+        proxy_read_timeout 86400;
+        proxy_connect_timeout 60;
+        proxy_send_timeout 60;
+    }
 
-`}`
-
+}
+```
 **การวิเคราะห์:**
 
 - **`listen 80`** → รอรับการเชื่อมต่อ HTTP ปกติ (Certbot จะเพิ่ม HTTPS ในภายหลัง)
@@ -737,12 +743,12 @@ nginx
 ## **6.3 เปิดใช้งาน config ของ Nginx**
 
 **คำสั่ง:**  
-bash  
-`sudo ln -s /etc/nginx/sites-available/n8n.conf /etc/nginx/sites-enabled/`  
-`sudo nginx -t`  
-`sudo systemctl restart nginx`  
-`sudo systemctl status nginx`
-
+```bash  
+sudo ln -s /etc/nginx/sites-available/n8n.conf /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+sudo systemctl status nginx
+```
 **การทำงานทีละบรรทัด:**
 
 1. `ln -s` → สร้าง symbolic link เพื่อเปิดใช้งาน site config (`sites-available` → `sites-enabled`)
@@ -757,10 +763,10 @@ bash
 1. **ปิดการเข้าถึงตรงไปที่ port 5678**
    - หลังจากใช้ Nginx proxy แล้ว ควรปิด firewall ของ port 5678 จาก public internet และให้เข้าผ่าน Nginx เท่านั้น
 
-bash
-
-`sudo ufw allow 80,443/tcp`  
-`sudo ufw deny 5678/tcp`
+```bash
+sudo ufw allow 80,443/tcp
+sudo ufw deny 5678/tcp
+```
 
 2. **เตรียม SSL ต่อใน Step 7**
 
@@ -771,9 +777,9 @@ bash
 
 ทดสอบจากเครื่อง client:
 
-bash  
-`curl -I http://n8n.thho.me`
-
+```bash  
+curl -I http://n8n.thho.me
+```
 - ต้องได้ HTTP 200 OK จาก Nginx และเป็นเนื้อหาจาก n8n
 
 ---
@@ -800,8 +806,9 @@ bash
 ## **7.1 ติดตั้ง Certbot**
 
 **คำสั่ง:**  
-bash  
-`sudo apt install certbot python3-certbot-nginx -y`  
+```bash  
+sudo apt install certbot python3-certbot-nginx -y
+```
 **การทำงาน:**
 
 - ติดตั้ง `certbot` → เครื่องมือขอใบรับรองจาก Let’s Encrypt
@@ -818,8 +825,9 @@ bash
 ## **7.2 ขอและติดตั้ง SSL Certificate**
 
 **คำสั่ง:**  
-bash  
-`sudo certbot --nginx -d n8n.thho.me`  
+```bash  
+sudo certbot --nginx -d n8n.thho.me
+```
 _(แก้ `n8n.thho.me` เป็นโดเมนจริงของคุณ)_  
 **สิ่งที่จะเกิดขึ้นระหว่างรันคำสั่ง:**
 
@@ -833,33 +841,34 @@ _(แก้ `n8n.thho.me` เป็นโดเมนจริงของคุ
    - แก้ไข config ของ Nginx ให้ใช้ HTTPS และ redirect HTTP
 
 **ตัวอย่าง config หลัง Certbot แก้ไข (เพิ่ม SSL block) เช็คว่าได้เพิ่มเข้ามาแล้ว:**  
-bash  
-`sudo nano /etc/nginx/sites-available/n8n.conf`
+```bash  
+sudo nano /etc/nginx/sites-available/n8n.conf
+```
 
-nginx  
-`server {`  
- `listen 443 ssl;`  
- `server_name n8n.thho.me;`
+```nginx
+server {
+ listen 443 ssl;
+ server_name n8n.thho.me;
 
-    `ssl_certificate /etc/letsencrypt/live/n8n.thho.me/fullchain.pem;`
-    `ssl_certificate_key /etc/letsencrypt/live/n8n.thho.me/privkey.pem;`
-    `include /etc/letsencrypt/options-ssl-nginx.conf;`
-    `ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;`
+    ssl_certificate /etc/letsencrypt/live/n8n.thho.me/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/n8n.thho.me/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
-    `location / {`
-        `proxy_pass http://localhost:5678;`
-        `proxy_http_version 1.1;`
-        `...`
-    `}`
+    location / {
+        proxy_pass http://localhost:5678;
+        proxy_http_version 1.1;
+        ...
+    }`
 
-`}`
+}
 
-`server {`  
- `listen 80;`  
- `server_name n8n.thho.me;`  
- `return 301 https://$host$request_uri;`  
-`}`
-
+server {
+ listen 80;
+ server_name n8n.thho.me;
+ return 301 https://$host$request_uri;
+}
+```
 ---
 
 ##
@@ -872,8 +881,9 @@ nginx
 - ตรวจสอบ certificate details → ต้องออกโดย Let’s Encrypt
 
 **ตรวจด้วย command line:**  
-bash  
-`curl -I https://n8n.thho.me`  
+```bash  
+curl -I https://n8n.thho.me
+```
 ต้องได้ HTTP 200 OK และ protocol `HTTP/2` หรือ `HTTP/1.1` ผ่าน `https`
 
 ---
@@ -899,57 +909,60 @@ java
 ## **7.5 วิธีแก้ปัญหา**
 
 1. **ตรวจสอบ IP ปัจจุบันของ VM**  
-    bash  
-   `curl ifconfig.me`  
+  ```bash  
+   curl ifconfig.me
+  ```
 
 2. **เช็ก DNS ปัจจุบัน**  
-    bash  
-   `dig n8n.thho.me +short`
+  ```bash  
+   dig n8n.thho.me +short
+  ```
 
 3. ถ้าไม่ตรง → แก้ A record ใน **Cloudflare** ให้ชี้ไป IP ใหม่
 4. ปิด Proxy (ให้เป็น "DNS only") ตอนขอ SSL
 5. รอ DNS propagate (ปกติ ≤ 5 นาทีถ้า TTL ต่ำ)
 6. ทดสอบพอร์ต 80 ว่าเข้าถึงได้  
-    bash  
-   `curl -I http://n8n.thho.me`  
-    ต้องได้ `HTTP/1.1 200 OK`
+  ```bash  
+   curl -I http://n8n.thho.me
+  ```
+   ต้องได้ `HTTP/1.1 200 OK`
 
 ---
 
 ## **7.6 ขอกันใหม่**
 
 หลังแก้ DNS ให้ถูกต้อง รันคำสั่งเดิม:  
-bash  
-`sudo certbot --nginx -d n8n.thho.me`
-
+```bash  
+sudo certbot --nginx -d n8n.thho.me
+```
 **ผลลัพธ์สำเร็จ:**  
-swift  
-`Successfully received certificate.`  
-`Certificate is saved at: /etc/letsencrypt/live/n8n.thho.me/fullchain.pem`  
-`Key is saved at:         /etc/letsencrypt/live/n8n.thho.me/privkey.pem`  
-`Congratulations! You have successfully enabled HTTPS`
-
+```swift  
+Successfully received certificate.
+Certificate is saved at: /etc/letsencrypt/live/n8n.thho.me/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/n8n.thho.me/privkey.pem 
+Congratulations! You have successfully enabled HTTPS
+```
 ---
 
 ## **7.7 ตรวจสอบ SSL**
 
-bash  
-`curl -I https://n8n.thho.me`
-
+```bash  
+curl -I https://n8n.thho.me
+```
 ## ต้องได้ status code 200 หรือ 301 (redirect ไป https)
 
 ## **7.8 ทดสอบต่ออายุอัตโนมัติ**
 
-bash  
-`sudo certbot renew --dry-run`
-
+```bash  
+sudo certbot renew --dry-run
+```
 ## ถ้าผ่าน แปลว่าทุก 90 วัน Certbot จะต่ออายุให้เองโดยไม่ต้องทำอะไร
 
 ## **7.9 ตรวจสอบ Cron Job ของ Certbot**
 
-bash  
-`systemctl list-timers | grep certbot`
-
+```bash  
+systemctl list-timers | grep certbot
+```
 - ปกติจะมี task auto-renew ทุกวัน
 
 ---
@@ -963,8 +976,6 @@ bash
    (หลังขอเสร็จจะเปิด Proxy ก็ได้)
 
 ---
-
-##
 
 ##
 
@@ -987,62 +998,65 @@ nginx
 
 **3.1 เปิดไฟล์ config ของเว็บ**
 
-bash  
-`sudo nano /etc/nginx/sites-available/n8n.conf`  
+```bash  
+sudo nano /etc/nginx/sites-available/n8n.conf
+```
 **3.2 เพิ่มบรรทัด HSTS ใน block ที่เป็น HTTPS เท่านั้น**  
  เช่น ใน `server { listen 443 ssl; ... }`
 
-nginx  
-`server {`  
- `listen 443 ssl;`  
- `server_name n8n.thho.me;`
+```nginx  
+server {
+ listen 443 ssl;
+ server_name n8n.thho.me;
 
-    `ssl_certificate /etc/letsencrypt/live/n8n.thho.me/fullchain.pem;`
-    `ssl_certificate_key /etc/letsencrypt/live/n8n.thho.me/privkey.pem;`
+    ssl_certificate /etc/letsencrypt/live/n8n.thho.me/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/n8n.thho.me/privkey.pem;
 
-    `add_header Strict-Transport-Security "max-age=31536000" always;`
+    add_header Strict-Transport-Security "max-age=31536000" always;
 
-    `location / {`
-        `proxy_pass http://localhost:5678;`
-        `proxy_http_version 1.1;`
-        `proxy_set_header Upgrade $http_upgrade;`
-        `proxy_set_header Connection "upgrade";`
-        `proxy_set_header Host $host;`
-        `proxy_set_header X-Real-IP $remote_addr;`
-        `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;`
-        `proxy_set_header X-Forwarded-Proto $scheme;`
-        `proxy_read_timeout 86400;`
-        `proxy_connect_timeout 60;`
-        `proxy_send_timeout 60;`
-    `}`
+    location / {
+        proxy_pass http://localhost:5678;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 86400;
+        proxy_connect_timeout 60;
+        proxy_send_timeout 60;
+    }
 
-`}`  
+}
+```
+
 **หมายเหตุ**:
 
 - `max-age=31536000` คือ 1 ปี (วินาที)
 - `always` บังคับให้ส่ง header นี้ในทุกการตอบสนองจากเซิร์ฟเวอร์
 
 **3.3 บันทึกไฟล์แล้วตรวจสอบ syntax**  
- bash  
-`sudo nginx -t`
-
+```bash  
+sudo nginx -t
+```
 3.4 **โหลดค่าใหม่**  
- bash  
-`sudo systemctl reload nginx`
-
+```bash  
+sudo systemctl reload nginx
+```
 **3.5 ทดสอบว่า header ถูกส่งออกมา**  
- bash  
-`curl -I https://n8n.thho.me`
-
-pgsql  
-`Strict-Transport-Security: max-age=31536000`
-
+```bash  
+curl -I https://n8n.thho.me
+```
+```pgsql  
+Strict-Transport-Security: max-age=31536000
+```
 ---
 
 ถ้าต้องการบังคับกับทุก subdomain ให้เพิ่ม `; includeSubDomains`  
- nginx  
-`add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;`
-
+```nginx  
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+```
 ---
 
 ✅ **ผลลัพธ์หลังจบ Step 7**
@@ -1076,8 +1090,9 @@ pgsql
    - ถ้าได้ HTTP 200 OK → ต่อไปขอ SSL ได้
 
 5. **รัน Certbot**
+
    - `sudo certbot --nginx -d yourdomain.com`
-   - ระบบจะขอใบ SSL แล้วกำหนดให้ Nginx ใช้งาน HTTPS พร้อม redirect  
+   - ระบบจะขอใบ SSL แล้วกำหนดให้ Nginx ใช้งาน HTTPS พร้อม redirect
 
 6. **ตรวจสอบผลลัพธ์**
 
@@ -1157,18 +1172,18 @@ dig yourdomain.com \+short
 
 1. **ตรวจสอบว่า DNS พร้อมใช้งานแล้ว** ใช้คำสั่ง:
 
-bash  
-`nslookup n8n.thho.me`  
+```bash  
+nslookup n8n.thho.me
+```
  หรือ
 
-bash  
-`dig n8n.thho.me +short`
-
+```bash  
+dig n8n.thho.me +short
+```
 - IP ที่แสดงควรตรงกับ Static IP ของ VM ที่ตั้งไว้ใน **Step 1.3**
 
 2. **เปิดเว็บเบราว์เซอร์** ไปที่:
 
-arduino  
 `https://n8n.thho.me`
 
 - ถ้าทำถูกขั้นตอนใน **Step 7** จะเห็นสัญลักษณ์กุญแจ 🔒 (SSL certificate valid) ที่ address bar
@@ -1197,13 +1212,14 @@ arduino
 
 **3\. ทดสอบการทำงานของ Webhook**  
 สร้าง Workflow ง่าย ๆ เช่น:  
- sql  
+```sql  
 `Trigger → Webhook`  
 `Respond → HTTP Response`
-
+```
 - กด “Execute Workflow” แล้วเรียกผ่าน:  
-   bash  
-  `curl -X GET "https://n8n.thho.me/webhook-test"`  
+  ```bash  
+  curl -X GET "https://n8n.thho.me/webhook-test"
+  ```
 
 - ถ้าได้ Response → แสดงว่าเซิร์ฟเวอร์เข้าถึงได้จากภายนอก
 
@@ -1212,9 +1228,9 @@ arduino
 - สร้าง Workflow → Save
 
 Restart container:  
- bash  
-`sudo docker-compose restart`
-
+```bash  
+sudo docker-compose restart
+```
 - กลับไปเช็กว่า Workflow ยังอยู่ → ถ้าหาย แสดงว่า Volume mapping ใน Step 5 อาจผิดพลาด
 
 ---
@@ -1232,13 +1248,12 @@ Restart container:
 ### **9.1 Updating n8n**
 
 อัปเดต n8n ด้วย Docker Compose เพื่อความปลอดภัยและได้ฟีเจอร์ใหม่ โดยไม่กระทบข้อมูลเดิม  
-bash  
-CopyEdit  
-`cd ~/n8n-docker`  
-`sudo docker-compose pull`  
-`sudo docker-compose up -d`  
-`sudo docker-compose logs n8n`
-
+```bash  
+cd ~/n8n-docker
+sudo docker-compose pull
+sudo docker-compose up -d 
+sudo docker-compose logs n8n
+```
 - `pull` → ดึง image เวอร์ชันล่าสุดจาก Docker Hub
 - `up -d` → รีสร้าง container โดยใช้ image ใหม่
 - Logs ควรไม่มี error และแสดงข้อความว่า **n8n ready on port 5678**
@@ -1248,31 +1263,29 @@ CopyEdit
 ### **9.2 Managing Your Deployment**
 
 คำสั่งพื้นฐานที่ใช้ดูแลระบบ  
-bash  
-CopyEdit  
-`sudo docker-compose down             # หยุดทุก service`  
-`sudo docker-compose up -d            # เริ่มใหม่`  
-`sudo docker-compose logs             # ดู log ทั้งหมด`  
-`sudo docker-compose logs n8n         # ดู log เฉพาะ n8n`  
-`sudo docker-compose restart n8n      # รีสตาร์ทเฉพาะ n8n`
-
+```bash  
+sudo docker-compose down             # หยุดทุก service
+sudo docker-compose up -d            # เริ่มใหม่
+sudo docker-compose logs             # ดู log ทั้งหมด
+sudo docker-compose logs n8n         # ดู log เฉพาะ n8n
+sudo docker-compose restart n8n      # รีสตาร์ทเฉพาะ n8n
+```
 ---
 
 ### **9.3 Backup Your Data**
 
 ข้อมูล n8n เก็บใน Docker Volume `n8n-docker_n8n_data`  
  สำรองข้อมูลแบบ `.tar.gz` เพื่อกู้คืนภายหลัง  
-bash  
-CopyEdit  
-`mkdir -p ~/n8n-backups`  
-`sudo docker run --rm \`  
- `-v n8n-docker_n8n_data:/data \`  
- `-v ~/n8n-backups:/backup \`  
- `ubuntu:latest \`  
- `tar czf /backup/n8n-backup-$(date +%Y%m%d_%H%M%S).tar.gz -C /data .`
+```bash  
+mkdir -p ~/n8n-backups
+sudo docker run --rm \
+ -v n8n-docker_n8n_data:/data \
+ -v ~/n8n-backups:/backup \
+ ubuntu:latest \
+ tar czf /backup/n8n-backup-$(date +%Y%m%d_%H%M%S).tar.gz -C /data .
 
-`cd ~/n8n-backups && ls -t n8n-backup-*.tar.gz | tail -n +11 | xargs rm -f`
-
+cd ~/n8n-backups && ls -t n8n-backup-*.tar.gz | tail -n +11 | xargs rm -f
+```
 - เก็บแค่ 10 backup ล่าสุด เพื่อลดการใช้พื้นที่
 
 ---
@@ -1280,63 +1293,57 @@ CopyEdit
 ### **9.4 Monitor System Health**
 
 เช็กสถานะและประสิทธิภาพเครื่อง  
-bash  
-CopyEdit  
-`sudo docker-compose ps`  
-`sudo docker-compose logs --tail=50 n8n`  
-`free -h   # ใช้ RAM เท่าไร`  
-`df -h     # เหลือพื้นที่ดิสก์เท่าไร`  
-`uptime    # โหลดเครื่องและเวลาทำงาน`
-
+```bash
+sudo docker-compose ps
+sudo docker-compose logs --tail=50 n8n
+free -h   # ใช้ RAM เท่าไร
+df -h     # เหลือพื้นที่ดิสก์เท่าไร
+uptime    # โหลดเครื่องและเวลาทำงาน
+```
 ---
 
 ### **9.5 SSL Certificate Renewal**
 
 Certbot จะต่ออายุ SSL อัตโนมัติทุก 90 วัน  
  แต่ควรทดสอบว่า auto-renew ทำงานจริง  
-bash  
-CopyEdit  
-`sudo certbot renew --dry-run`  
-`sudo systemctl status certbot.timer`  
-`sudo certbot renew   # ถ้าต้องต่ออายุเอง`
-
+```bash  
+sudo certbot renew --dry-run
+sudo systemctl status certbot.timer
+sudo certbot renew   # ถ้าต้องต่ออายุเอง
+```
 ---
 
 ## **Troubleshooting Common Issues**
 
 ### **1\. Container ไม่ยอม Start**
 
-bash  
-CopyEdit  
-`sudo docker-compose ps`  
-`sudo docker-compose logs n8n`  
-`sudo netstat -tlnp | grep 5678`  
-`sudo docker-compose restart`
-
+```bash  
+sudo docker-compose ps
+sudo docker-compose logs n8n
+sudo netstat -tlnp | grep 5678
+sudo docker-compose restart
+```
 ### **2\. SSL Certificate มีปัญหา**
 
-bash  
-CopyEdit  
-`sudo certbot certificates`  
-`nslookup n8n.thho.me`  
-`sudo certbot --nginx -d n8n.thho.me --force-renewal`
-
+```bash  
+sudo certbot certificates
+nslookup n8n.thho.me
+sudo certbot --nginx -d n8n.thho.me --force-renewal
+```
 ### **3\. Nginx Config Error**
 
-bash  
-CopyEdit  
-`sudo nginx -t`  
-`sudo tail -f /var/log/nginx/error.log`  
-`sudo systemctl restart nginx`
-
+```bash  
+sudo nginx -t
+sudo tail -f /var/log/nginx/error.log
+sudo systemctl restart nginx
+```
 ### **4\. Docker Compose Error**
 
-bash  
-CopyEdit  
-`sudo docker-compose config`  
-`sudo docker-compose down && sudo docker-compose up -d --force-recreate`  
-`sudo docker-compose down -v && sudo docker-compose up -d   # ลบ volume (ข้อมูลหาย)`
-
+```bash  
+sudo docker-compose config
+sudo docker-compose down && sudo docker-compose up -d --force-recreate
+sudo docker-compose down -v && sudo docker-compose up -d   # ลบ volume (ข้อมูลหาย)
+```
 ---
 
 ✅ ตอนนี้ **n8n.thho.me** ของคุณพร้อมใช้งานในระดับ Production แล้ว
@@ -1374,19 +1381,20 @@ CopyEdit
 
 สร้างไฟล์ config ให้ n8n อ่านตอน start: n8n settings file (`config`)  
 เปิดไฟล์  
-bash  
-`mkdir -p ~/.n8n`  
-`nano ~/.n8n/config`
-
+```bash  
+mkdir -p ~/.n8n
+nano ~/.n8n/config
+```
 วางโค้ดนี้:  
-js  
-`module.exports = {`  
- `generic: {`  
- `express: {`  
- `trustProxy: true`  
- `}`  
- `}`  
-`}`  
+```js  
+module.exports = {
+ generic: {
+ express: {
+ trustProxy: true
+ }
+ } 
+ }
+```
 Save File เวลาแก้ไฟล์ด้วย `nano` ให้กดตามนี้:
 
 1. พิมพ์/วางโค้ด
@@ -1400,52 +1408,52 @@ Save File เวลาแก้ไฟล์ด้วย `nano` ให้กด�
 
 เพิ่ม 2 service: main กับ runner  
  และ mount config เข้า main \+ runner  
-bash  
-`cd ~/n8n-docker`  
-`nano docker-compose.yml`
+```bash
+cd ~/n8n-docker
+nano docker-compose.yml
+```
+```yaml
+version: '3.3'
 
-yaml  
-`version: '3.3'`
+services:
+ n8n:
+ image: n8nio/n8n:latest
+ restart: always
+ environment:
+ - N8N_HOST=n8n.thho.me
+ - N8N_PROTOCOL=https
+ - WEBHOOK_TUNNEL_URL=https://n8n.thho.me/
+ - N8N_RUNNERS_ENABLED=true
+ - N8N_RUNNERS_LICENSE_CERT_AUTO_RENEW=true
+ ports:
+ - "5678:5678"
+ volumes:
+ - n8n_data:/home/node/.n8n
+ - ~/.n8n/config:/home/node/.n8n/config
+ networks:
+ - n8n_network
 
-`services:`  
- `n8n:`  
- `image: n8nio/n8n:latest`  
- `restart: always`  
- `environment:`  
- `- N8N_HOST=n8n.thho.me`  
- `- N8N_PROTOCOL=https`  
- `- WEBHOOK_TUNNEL_URL=https://n8n.thho.me/`  
- `- N8N_RUNNERS_ENABLED=true`  
- `- N8N_RUNNERS_LICENSE_CERT_AUTO_RENEW=true`  
- `ports:`  
- `- "5678:5678"`  
- `volumes:`  
- `- n8n_data:/home/node/.n8n`  
- `- ~/.n8n/config:/home/node/.n8n/config`  
- `networks:`  
- `- n8n_network`
+runner:
+ image: n8nio/n8n:latest
+ restart: always
+ environment:
+ - N8N_RUNNERS_ENABLED=true
+ - N8N_RUNNERS_HOST=n8n
+ - N8N_RUNNERS_PROTOCOL=https
+ - N8N_RUNNERS_AUTH_BASIC=true
+ volumes:
+ - ~/.n8n/config:/home/node/.n8n/config
+ depends_on:
+ - n8n
+ networks:
+ - n8n_network
 
-`runner:`  
- `image: n8nio/n8n:latest`  
- `restart: always`  
- `environment:`  
- `- N8N_RUNNERS_ENABLED=true`  
- `- N8N_RUNNERS_HOST=n8n`  
- `- N8N_RUNNERS_PROTOCOL=https`  
- `- N8N_RUNNERS_AUTH_BASIC=true`  
- `volumes:`  
- `- ~/.n8n/config:/home/node/.n8n/config`  
- `depends_on:`  
- `- n8n`  
- `networks:`  
- `- n8n_network`
+networks:
+ n8n_network:
 
-`networks:`  
- `n8n_network:`
-
-`volumes:`  
- `n8n_data:`
-
+volumes:
+ n8n_data:
+```
 Save File เวลาแก้ไฟล์ด้วย `nano` ให้กดตามนี้:
 
 1. พิมพ์/วางโค้ด
