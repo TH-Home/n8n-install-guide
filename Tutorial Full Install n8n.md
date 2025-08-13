@@ -975,7 +975,7 @@ systemctl list-timers | grep certbot
 - เปิด **HTTP Strict Transport Security (HSTS)** ใน config Nginx เพื่อบังคับใช้ HTTPS:
 
 ```nginx
-`add_header Strict-Transport-Security "max-age=31536000" always;`
+add_header Strict-Transport-Security "max-age=31536000" always;
 ```
 ###
 **3.1 เปิดไฟล์ config ของเว็บ**
@@ -1167,9 +1167,9 @@ dig n8n.thho.me +short
 
 2. **เปิดเว็บเบราว์เซอร์** ไปที่:
 
-`https://n8n.thho.me`
+      `https://n8n.thho.me`
 
-- ถ้าทำถูกขั้นตอนใน **Step 7** จะเห็นสัญลักษณ์กุญแจ 🔒 (SSL certificate valid) ที่ address bar
+      - ถ้าทำถูกขั้นตอนใน **Step 7** จะเห็นสัญลักษณ์กุญแจ 🔒 (SSL certificate valid) ที่ address bar
 
 3. **ทำตาม Setup Wizard**
    - สร้าง **User Account แรก** → username, email, password
@@ -1450,7 +1450,7 @@ Save File เวลาแก้ไฟล์ด้วย `nano` ให้กด�
 
 แก้ `/etc/nginx/sites-available/n8n.conf`:
 ```bash  
-sudo nano /etc/nginx/sites-available/n8n.conf`
+sudo nano /etc/nginx/sites-available/n8n.conf
 ```
 ```nginx
 location / {
@@ -1485,9 +1485,9 @@ Save File เวลาแก้ไฟล์ด้วย `nano` ให้กด�
 ### **4\. Restart ทั้งระบบ**
 
 ```bash
-`sudo docker-compose down -v`
-`sudo docker-compose up -d --build`
-`sudo systemctl restart nginx`
+sudo docker-compose down -v
+sudo docker-compose up -d --build
+sudo systemctl restart nginx
 ```
 ---
 
@@ -1703,13 +1703,13 @@ sudo nano /etc/cloudflared/config.yml
 ```
 ใส่:
 ```yaml
-tunnel: YOUR-TUNNEL-ID`
-credentials-file: /etc/cloudflared/YOUR-TUNNEL-ID.json`
+tunnel: YOUR-TUNNEL-ID
+credentials-file: /etc/cloudflared/YOUR-TUNNEL-ID.json
 
 ingress:
- - hostname: n8n.thho.me`
- - service: http://localhost:5678`
- - service: http_status:404`
+ - hostname: n8n.thho.me
+ - service: http://localhost:5678
+ - service: http_status:404
 ```
 ## แทนที่ `YOUR-TUNNEL-ID` ด้วยค่า ID จากตอนสร้าง Tunnel
 
@@ -1802,7 +1802,7 @@ timedatectl
 
 #
 
-# **โหมดที่ 6: Full Maintenance (Backup \+ Update \+ Renew SSL \+ Restart Nginx \+ Log Check)**
+# **สคริปต์ : Full Maintenance (Backup \+ Update \+ Renew SSL \+ Restart Nginx \+ Log Check)**
 
 ในสคริปต์นี้ผมได้เพิ่มให้:
 
@@ -1813,7 +1813,7 @@ timedatectl
 - ✅ เลือกได้ว่าจะ Full Reset, Restart+Backup หรือ Restore ล่าสุด
 
 ---
-สิ่งที่ผมจะปรับในสคริปต์เดิม**
+สิ่งที่ผมจะปรับในสคริปต์เดิม
 
 1. เพิ่ม `docker compose` แทน `docker-compose` (เพราะในบางระบบ version ใหม่ใช้ `docker compose`)
    แต่จะเช็กก่อน ถ้าไม่มี จะ fallback กลับไปใช้ `docker-compose`
@@ -2059,20 +2059,10 @@ sudo docker-compose logs -f n8n
 ```
 ---
 
-## ตรวจ Log
-## `sudo docker-compose logs -f n8n`
-
-**สิ่งที่ผมจะปรับในสคริปต์เดิม**
-
-1. เพิ่ม `docker compose` แทน `docker-compose` (เพราะในบางระบบ version ใหม่ใช้ `docker compose`)  
-   แต่จะเช็กก่อน ถ้าไม่มี จะ fallback กลับไปใช้ `docker-compose`
-
-2. เพิ่ม `set -euo pipefail` เพื่อให้สคริปต์หยุดทันทีถ้ามี error และใช้ตัวแปรที่ไม่ถูกกำหนดไม่ได้
-
-3. เพิ่ม log timestamp ให้ทุกการทำงาน เพื่อเวลา restore หรือ debug จะได้ง่าย
-
-4. ปรับ `restore_backup` และ `restore_latest` ให้ restart n8n \+ maintenance_tasks อัตโนมัติหลัง restore
-
+# ตรวจ Log
+```bash
+sudo docker-compose logs -f n8n
+```
 ---
 
 [image1]: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAloAAAJrCAMAAAAPo83QAAADAFBMVEX////q6OXV2+Pn49jz8/Pr7vFzc3ODg4OGio13eX6UlJT7+/vq6upubm79+vbc3Nx7e3v4+Pj1+vvZ8/iY1emHxduJ1eib5PC55fLY6vP8/f3n9vrJ6fOTzeOFy+Oqzuj19vjI8fnr8/mW3fGo1+emzNrj4
