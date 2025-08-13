@@ -6,7 +6,7 @@
 
 - n8n (เครื่องมือ Automation แบบ Open Source) ทำงานบน **Google Cloud e2-micro (Always Free tier)**
 - ใช้ **Docker** เพื่อรัน container ของ n8n
-- ใช้ **Nginx Reverse Proxy** \+ SSL (Let’s Encrypt / Cloudflare)  
+- ใช้ **Nginx Reverse Proxy** \+ SSL (Let’s Encrypt / Cloudflare)
   เก็บข้อมูลใน **Local Persistent Volume** เพื่อป้องกันข้อมูลหาย
 - สามารถรันใน subdomain เช่น `n8n.thho.me` หรือเป็นโดเมนใหม่ก็ได้
 - ใช้งานได้ฟรี (ตามเงื่อนไข Free tier ของ GCP) แต่พร้อมสำหรับ Production
@@ -1852,58 +1852,58 @@ CopyEdit
 ---
 
 นี่คือสคริปต์ที่ **ปรับปรุงแล้ว** \+ **ระบบรัน Full Maintenance ทุกสัปดาห์เวลา 03:00 น. ตามเวลาไทย**  
-bash  
-CopyEdit  
-`#!/bin/bash`  
-`set -euo pipefail`
+```bash  
+CopyEdit
+`#!/bin/bash
+`set -euo pipefail
 
-`# ===== CONFIG =====`  
-`BACKUP_DIR="$HOME/n8n-backups"`  
-`VOLUME_NAME="n8n-docker_n8n_data"`  
-`IMAGE_NAME="n8nio/n8n:latest"`  
-`DOCKER_COMPOSE_FILE="$HOME/n8n-docker/docker-compose.yml"`  
-`LOG_TAG="[n8n-maintenance $(date '+%Y-%m-%d %H:%M:%S')]"`
+`# ===== CONFIG =====
+`BACKUP_DIR="$HOME/n8n-backups"
+`VOLUME_NAME="n8n-docker_n8n_data"
+`IMAGE_NAME="n8nio/n8n:latest"
+`DOCKER_COMPOSE_FILE="$HOME/n8n-docker/docker-compose.yml"
+`LOG_TAG="[n8n-maintenance $(date '+%Y-%m-%d %H:%M:%S')]"
 
-`# ===== Detect docker compose command =====`  
-`if command -v docker compose &>/dev/null; then`  
- `DC_CMD="docker compose"`  
-`else`  
- `DC_CMD="docker-compose"`  
-`fi`
+`# ===== Detect docker compose command =====
+`if command -v docker compose &>/dev/null; then
+ `DC_CMD="docker compose"
+`else
+ `DC_CMD="docker-compose"
+`fi
 
-`log() {`  
- `echo "$LOG_TAG $1"`  
-`}`
+`log() {
+ `echo "$LOG_TAG $1"
+`}
 
-`backup_data() {`  
- `mkdir -p "$BACKUP_DIR"`  
- `BACKUP_FILE="$BACKUP_DIR/n8n-backup-$(date +%Y%m%d-%H%M%S).tar.gz"`  
- `log "📦 กำลัง Backup..."`  
- `docker run --rm -v "$VOLUME_NAME":/data -v "$BACKUP_DIR":/backup alpine \`  
- `tar czf "/backup/$(basename "$BACKUP_FILE")" -C /data .`  
- `log "✅ Backup เสร็จ: $BACKUP_FILE"`
+`backup_data() {
+ `mkdir -p "$BACKUP_DIR"
+ `BACKUP_FILE="$BACKUP_DIR/n8n-backup-$(date +%Y%m%d-%H%M%S).tar.gz"
+ `log "📦 กำลัง Backup..."
+ `docker run --rm -v "$VOLUME_NAME":/data -v "$BACKUP_DIR":/backup alpine \
+ `tar czf "/backup/$(basename "$BACKUP_FILE")" -C /data .
+ `log "✅ Backup เสร็จ: $BACKUP_FILE"
 
     `find "$BACKUP_DIR" -type f -name "*.tar.gz" -mtime +7 -exec rm {} \; || true`
 
-`}`
+`}
 
-`restore_backup() {`  
- `echo "📂 เลือกไฟล์ Backup ที่ต้องการกู้:"`  
- `select FILE in "$BACKUP_DIR"/*.tar.gz; do`  
- `if [ -n "$FILE" ]; then`  
- `log "♻️ กำลังกู้ข้อมูลจาก $FILE"`  
- `$DC_CMD -f "$DOCKER_COMPOSE_FILE" down`  
- `docker run --rm -v "$VOLUME_NAME":/data -v "$FILE":/backup.tar.gz alpine \`  
- `sh -c "rm -rf /data/* && tar xzf /backup.tar.gz -C /data"`  
- `$DC_CMD -f "$DOCKER_COMPOSE_FILE" up -d`  
- `maintenance_tasks`  
- `break`  
- `fi`  
- `done`  
-`}`
+`restore_backup() {
+ `echo "📂 เลือกไฟล์ Backup ที่ต้องการกู้:"
+ `select FILE in "$BACKUP_DIR"/*.tar.gz; do
+ `if [ -n "$FILE" ]; then
+ `log "♻️ กำลังกู้ข้อมูลจาก $FILE"
+ `$DC_CMD -f "$DOCKER_COMPOSE_FILE" down
+ `docker run --rm -v "$VOLUME_NAME":/data -v "$FILE":/backup.tar.gz alpine \
+ `sh -c "rm -rf /data/* && tar xzf /backup.tar.gz -C /data"
+ `$DC_CMD -f "$DOCKER_COMPOSE_FILE" up -d
+ `maintenance_tasks
+ `break
+ `fi
+ `done
+`}
 
-`restore_latest() {`  
- `FILE=$(ls -t "$BACKUP_DIR"/*.tar.gz 2>/dev/null | head -n 1 || true)`  
+`restore_latest() {
+ `FILE=$(ls -t "$BACKUP_DIR"/*.tar.gz 2>/dev/null | head -n 1 || true)
  `if [ -n "$FILE" ]; then`  
  `log "♻️ กำลังกู้ข้อมูลจาก $FILE"`  
  `$DC_CMD -f "$DOCKER_COMPOSE_FILE" down`  
@@ -1940,93 +1940,91 @@ CopyEdit
 `}`
 
 `maintenance_tasks() {`  
- `log "🔄 Restart nginx..."`  
- `sudo systemctl restart nginx`  
- `log "🔑 Renew SSL..."`  
- `sudo certbot renew --quiet`  
- `log "📜 ตรวจสอบ Log n8n..."`  
- `$DC_CMD -f "$DOCKER_COMPOSE_FILE" logs --tail=30 n8n || true`  
-`}`
+ `log "🔄 Restart nginx..."
+  `sudo systemctl restart nginx
+ `log "🔑 Renew SSL..."
+ `sudo certbot renew --quiet
+ `log "📜 ตรวจสอบ Log n8n..."
+ `$DC_CMD -f "$DOCKER_COMPOSE_FILE" logs --tail=30 n8n || true
+`}
 
-`# ===== MENU =====`  
-`if [[ "${1:-}" == "--auto" ]]; then`  
- `log "⚙️ รันโหมด Full Maintenance อัตโนมัติ"`  
- `backup_data`  
- `$DC_CMD -f "$DOCKER_COMPOSE_FILE" down`  
- `docker pull "$IMAGE_NAME"`  
- `$DC_CMD -f "$DOCKER_COMPOSE_FILE" up -d`  
- `maintenance_tasks`  
- `exit 0`  
-`fi`
+`# ===== MENU =====
+`if [[ "${1:-}" == "--auto" ]]; then
+ `log "⚙️ รันโหมด Full Maintenance อัตโนมัติ"
+ `backup_data
+ `$DC_CMD -f "$DOCKER_COMPOSE_FILE" down
+ `docker pull "$IMAGE_NAME"
+ `$DC_CMD -f "$DOCKER_COMPOSE_FILE" up -d
+ `maintenance_tasks
+ `exit 0
+`fi
 
-`echo "========= Manage n8n ========="`  
-`echo "1. Full Reset + Backup"`  
-`echo "2. Restart + Backup"`  
-`echo "3. Restore เลือกไฟล์"`  
-`echo "4. Restore ล่าสุด"`  
-`echo "5. Update + Backup"`  
-`echo "6. Full Maintenance (Backup + Update + Renew SSL + Restart nginx + Log)"`  
-`read -p "เลือกหมายเลข: " choice`
+`echo "========= Manage n8n ========="
+`echo "1. Full Reset + Backup"
+`echo "2. Restart + Backup"
+`echo "3. Restore เลือกไฟล์"
+`echo "4. Restore ล่าสุด"
+`echo "5. Update + Backup"
+`echo "6. Full Maintenance (Backup + Update + Renew SSL + Restart nginx + Log)"
+`read -p "เลือกหมายเลข: " choice
 
-`case $choice in`  
- `1)`  
- `backup_data`  
- `$DC_CMD -f "$DOCKER_COMPOSE_FILE" down -v`  
- `docker pull "$IMAGE_NAME"`  
- `generate_compose`  
- `$DC_CMD -f "$DOCKER_COMPOSE_FILE" up -d`  
- `maintenance_tasks`  
- `;;`  
- `2)`  
- `backup_data`  
- `$DC_CMD -f "$DOCKER_COMPOSE_FILE" restart`  
- `maintenance_tasks`  
- `;;`  
- `3)`  
- `restore_backup`  
- `;;`  
- `4)`  
- `restore_latest`  
- `;;`  
- `5)`  
- `backup_data`  
- `$DC_CMD -f "$DOCKER_COMPOSE_FILE" down`  
- `docker pull "$IMAGE_NAME"`  
- `$DC_CMD -f "$DOCKER_COMPOSE_FILE" up -d`  
- `maintenance_tasks`  
- `;;`  
- `6)`  
- `backup_data`  
- `$DC_CMD -f "$DOCKER_COMPOSE_FILE" down`  
- `docker pull "$IMAGE_NAME"`  
- `$DC_CMD -f "$DOCKER_COMPOSE_FILE" up -d`  
- `maintenance_tasks`  
- `;;`  
- `*)`  
- `log "❌ ตัวเลือกไม่ถูกต้อง"`  
- `;;`  
-`esac`
-
+`case $choice in
+ `1)
+ `backup_data
+ `$DC_CMD -f "$DOCKER_COMPOSE_FILE" down -v
+ `docker pull "$IMAGE_NAME"
+ `generate_compose
+ `$DC_CMD -f "$DOCKER_COMPOSE_FILE" up -d
+ `maintenance_tasks
+ `;;
+ `2)
+ `backup_data
+ `$DC_CMD -f "$DOCKER_COMPOSE_FILE" restart
+ `maintenance_tasks
+ `;;
+ `3)
+ `restore_backup
+ `;;
+ `4)
+ `restore_latest
+ `;;
+ `5)
+ `backup_data
+ `$DC_CMD -f "$DOCKER_COMPOSE_FILE" down
+ `docker pull "$IMAGE_NAME"
+ `$DC_CMD -f "$DOCKER_COMPOSE_FILE" up -d
+ `maintenance_tasks
+ `;;
+ `6)
+ `backup_data
+ `$DC_CMD -f "$DOCKER_COMPOSE_FILE" down
+ `docker pull "$IMAGE_NAME"
+ `$DC_CMD -f "$DOCKER_COMPOSE_FILE" up -d
+ `maintenance_tasks
+ `;;
+ `*)
+ `log "❌ ตัวเลือกไม่ถูกต้อง"
+ `;;
+`esac
+```
 ---
 
 ### **ติดตั้งระบบ Auto Run ทุกสัปดาห์เวลา 03:00 น. (เวลาไทย)**
 
-1\. เปิด cron:  
-bash  
-`crontab -e`
+   1. เปิด cron:  
+```bash  
+crontab -e
+```
+   2. กดเลข 1  
+   3. เพิ่มบรรทัดนี้:  
+```bash  
+0 3 * * 1 /bin/bash $HOME/n8n-docker/manage-n8n.sh --auto >> $HOME/n8n-docker/auto-maintenance.log 2>&1
+```
+   4. กด Ctrl+O \> กดปุ่ม Enter \> กด Ctrl+X
 
-2\. กดเลข 1  
-3\. เพิ่มบรรทัดนี้:  
-bash  
-`0 3 * * 1 /bin/bash $HOME/n8n-docker/manage-n8n.sh --auto >> $HOME/n8n-docker/auto-maintenance.log 2>&1`
-
-`4.` กด Ctrl+O \> กดปุ่ม Enter \> กด Ctrl+X
-
-- `0 3 * * 1` \= ทุกวันจันทร์เวลา 03:00 (เวลาไทย)
-
-- `--auto` \= ให้สคริปต์รัน Full Maintenance แบบไม่ถาม
-
-- log จะถูกเก็บไว้ที่ `auto-maintenance.log`
+      - `0 3 * * 1` \= ทุกวันจันทร์เวลา 03:00 (เวลาไทย)
+      - `--auto` \= ให้สคริปต์รัน Full Maintenance แบบไม่ถาม
+      - log จะถูกเก็บไว้ที่ `auto-maintenance.log`
 
 ---
 
@@ -2037,69 +2035,59 @@ bash
 
 ### **ตรวจสอบว่าเพิ่มสำเร็จ**
 
-bash  
-`crontab -l`
-
+```bash  
+crontab -l
+```
 คุณจะเห็นบรรทัด:  
-bash  
 `0 3 * * 0 /bin/bash /home/thongtrachu_t/n8n-docker/manage-n8n.sh <<< '6' >/dev/null 2>&1`
 
----
-
 ##
-
 ## **ลบ container / image / volume / network ที่ไม่ใช้งาน** ออกทั้งหมดได้ด้วยคำสั่งนี้:
 
-bash  
-`# หยุด container ที่รันอยู่ทั้งหมด`  
-`sudo docker stop $(sudo docker ps -aq) 2>/dev/null || true`
-
-`# ลบ container ทั้งหมดที่หยุดแล้ว`  
-`sudo docker rm $(sudo docker ps -aq) 2>/dev/null || true`
-
-`# ลบ image ที่ไม่ถูกใช้งาน`  
-`sudo docker image prune -a -f`
-
-`# ลบ volume ที่ไม่ถูกใช้งาน`  
-`sudo docker volume prune -f`
-
-`# ลบ network ที่ไม่ถูกใช้งาน`  
-`sudo docker network prune -f`
-
-`# ตรวจสอบพื้นที่หลังทำความสะอาด`  
-`sudo docker system df`
-
+```bash
+# หยุด container ที่รันอยู่ทั้งหมด
+sudo docker stop $(sudo docker ps -aq) 2>/dev/null || true
+# ลบ container ทั้งหมดที่หยุดแล้ว
+sudo docker rm $(sudo docker ps -aq) 2>/dev/null || true
+# ลบ image ที่ไม่ถูกใช้งาน
+sudo docker image prune -a -f
+# ลบ volume ที่ไม่ถูกใช้งาน
+sudo docker volume prune -f
+# ลบ network ที่ไม่ถูกใช้งาน
+sudo docker network prune -f
+# ตรวจสอบพื้นที่หลังทำความสะอาด
+sudo docker system df
+```
 ถ้าจะให้จบในคำสั่งเดียวแบบรวมกัน (หยุด-ลบ-เคลียร์-ตรวจสอบ) ก็ทำได้แบบนี้:  
-bash  
-`sudo docker stop $(sudo docker ps -aq) 2>/dev/null || true && \`  
-`sudo docker rm $(sudo docker ps -aq) 2>/dev/null || true && \`  
-`sudo docker image prune -a -f && \`  
-`sudo docker volume prune -f && \`  
-`sudo docker network prune -f && \`  
-`sudo docker system df`
-
+```bash
+sudo docker stop $(sudo docker ps -aq) 2>/dev/null || true && \
+sudo docker rm $(sudo docker ps -aq) 2>/dev/null || true && \
+sudo docker image prune -a -f && \
+sudo docker volume prune -f && \
+sudo docker network prune -f && \
+sudo docker system df
+```
 ---
 
 # **เพิ่มสิทธิ์ให้ user ปัจจุบันใช้ Docker ได้** (ไม่ต้องพิมพ์ sudo ทุกครั้ง)
 
-bash  
-`sudo usermod -aG docker $USER`
-
+```bash
+sudo usermod -aG docker $USER
+```
 ## \*\*แล้ว **ออกจาก SSH และเข้าใหม่** เพื่อให้สิทธิ์มีผล\*\*
 
 ### **คำสั่งรีเซ็ตให้กลับมาใช้ image และคำสั่งเริ่มต้นที่ถูกต้อง**
 
-bash  
-`cd ~/n8n-docker`  
-`sudo docker-compose down -v`  
-`sudo docker pull n8nio/n8n:latest`  
-`sudo docker-compose up -d`  
-`sudo docker-compose logs -f n8n`
-
+```bash
+cd ~/n8n-docker
+sudo docker-compose down -v
+sudo docker pull n8nio/n8n:latest
+sudo docker-compose up -d
+sudo docker-compose logs -f n8n
+```
 ---
 
-\*\* ตรวจ Log \*\*
-
+## \* ตรวจ Log \*
 ## `sudo docker-compose logs -f n8n`
 
 **สิ่งที่ผมจะปรับในสคริปต์เดิม**
